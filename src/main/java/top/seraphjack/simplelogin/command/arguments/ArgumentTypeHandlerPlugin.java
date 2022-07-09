@@ -1,13 +1,17 @@
 package top.seraphjack.simplelogin.command.arguments;
 
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import top.seraphjack.simplelogin.server.SLRegistries;
 import top.seraphjack.simplelogin.server.handler.PlayerLoginHandler;
@@ -67,8 +71,43 @@ public final class ArgumentTypeHandlerPlugin implements ArgumentType<HandlerPlug
             return SharedSuggestionProvider.suggest(plugins.stream().map(ResourceLocation::toString), builder);
         } else if (context.getSource() instanceof SharedSuggestionProvider) {
             CommandContext<SharedSuggestionProvider> ctx = (CommandContext<SharedSuggestionProvider>) context;
-            return ((SharedSuggestionProvider) context.getSource()).customSuggestion(ctx, builder);
+            return ((SharedSuggestionProvider) context.getSource()).customSuggestion(ctx);
         }
         return Suggestions.empty();
+    }
+
+    public static class Info implements ArgumentTypeInfo<ArgumentTypeHandlerPlugin, ArgumentTypeHandlerPlugin.Info.Template> {
+        @Override
+        public void serializeToNetwork(ArgumentTypeHandlerPlugin.Info.Template template, FriendlyByteBuf buffer) {
+
+        }
+
+        @Override
+        public ArgumentTypeHandlerPlugin.Info.Template deserializeFromNetwork(FriendlyByteBuf buffer) {
+            return new ArgumentTypeHandlerPlugin.Info.Template();
+        }
+
+        @Override
+        public void serializeToJson(ArgumentTypeHandlerPlugin.Info.Template template, JsonObject json) {
+
+        }
+
+        @Override
+        public ArgumentTypeHandlerPlugin.Info.Template unpack(ArgumentTypeHandlerPlugin argument) {
+            return new ArgumentTypeHandlerPlugin.Info.Template();
+        }
+
+        public class Template implements ArgumentTypeInfo.Template<ArgumentTypeHandlerPlugin> {
+
+            @Override
+            public ArgumentTypeHandlerPlugin instantiate(CommandBuildContext commandBuildContext) {
+                return allPlugins();
+            }
+
+            @Override
+            public ArgumentTypeInfo<ArgumentTypeHandlerPlugin, ?> type() {
+                return ArgumentTypeHandlerPlugin.Info.this;
+            }
+        }
     }
 }

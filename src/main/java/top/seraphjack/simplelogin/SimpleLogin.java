@@ -19,10 +19,11 @@ public final class SimpleLogin {
     public static Logger logger = LogManager.getLogger(SLConstants.MODID);
 
     public SimpleLogin() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(CommandLoader::commonSetup);
+        CommandLoader.COMMAND_ARGUMENT_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ServerLoader::serverSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLCommonSetupEvent e) -> NetworkLoader.registerPackets());
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SLConfig.SERVER_SPEC);
+
     }
 }
