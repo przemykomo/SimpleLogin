@@ -2,6 +2,7 @@ package top.seraphjack.simplelogin.command;
 
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,10 +19,10 @@ public final class CommandLoader {
 
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, SLConstants.MODID);
 
-    public static final RegistryObject<ArgumentTypeEntryName.Info> ENTRY_NAME_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("entry", () ->
-            ArgumentTypeInfos.registerByClass(ArgumentTypeEntryName.class, new ArgumentTypeEntryName.Info()));
-    public static final RegistryObject<ArgumentTypeHandlerPlugin.Info> PLUGIN_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("plugin", () ->
-            ArgumentTypeInfos.registerByClass(ArgumentTypeHandlerPlugin.class, new ArgumentTypeHandlerPlugin.Info()));
+    public static final RegistryObject<SingletonArgumentInfo<ArgumentTypeEntryName>> ENTRY_NAME_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("entry", () ->
+            ArgumentTypeInfos.registerByClass(ArgumentTypeEntryName.class, SingletonArgumentInfo.contextFree(ArgumentTypeEntryName::entryName)));
+    public static final RegistryObject<SingletonArgumentInfo<ArgumentTypeHandlerPlugin>> PLUGIN_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("plugin", () ->
+            ArgumentTypeInfos.registerByClass(ArgumentTypeHandlerPlugin.class, SingletonArgumentInfo.contextFree(ArgumentTypeHandlerPlugin::allPlugins)));
 
     @SubscribeEvent
     public static void commandRegister(RegisterCommandsEvent event) {
